@@ -1,0 +1,33 @@
+.wrapper {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+.search-bar {
+  margin: 2rem 0;
+
+  input {
+    width: 98%;
+    background-color: #eee;
+    border: none;
+    padding: 1rem;
+  }
+}
+
+.load-more {
+  margin: 4rem auto 5rem;
+  display: block;
+  background-color: #535bf2;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  border-radius: 0;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  &:hover {
+      color: #ddd;
+  }
+}
