@@ -2,6 +2,7 @@ import "./app.scss";
 import { Card } from './components/Card/Card';
 import { useEffect, useState, useRef } from "react";
 import { formatDate, formatSaleDate } from "./utils/dateUtils"; //helper files
+import React from "react";
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -14,6 +15,8 @@ function App() {
   const audioRef = useRef(new Audio());
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
 
+  const REACT_VERSION = React.version;
+  
   const handlePlayPreview = (event: any) => {
     const previewUrl =
       event.apple_music_tracks?.[0]?.preview_url ||
@@ -109,6 +112,7 @@ function App() {
   return (
     <div className="wrapper">
 
+      <p>React version : {REACT_VERSION}</p>
       <div className="search-bar">
 
         <h1>
