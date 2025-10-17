@@ -2,17 +2,21 @@
 import './card.scss';
 import { CtaLink } from '../CtaLink/CtaLink';
 import { ImageBanner } from '../ImageBanner/ImageBanner';
+import type { CardProps } from './interface';
 
-export function Card({
+
+export const Card: React.FC<CardProps> = ({ 
   event,
   index,
-  isPlaying,
   openEventIds,
-  handlePlayPreview,
   toggleMoreInfo,
   formatDate,
   formatSaleDate,
-}) {
+  isPlaying,
+  handlePlayPreview,
+ }) => {
+
+ // console.log(event)
   return (
     <div className={`card-item ${index === 0 ? "featured" : ""}`}>
 
@@ -21,6 +25,7 @@ export function Card({
         isPlaying={isPlaying}
         handlePlayPreview={handlePlayPreview}
         formatSaleDate={formatSaleDate}
+        
       />
 
       <div className='card-summary'>
@@ -41,26 +46,26 @@ export function Card({
             More Info <span className="info-wrapper__toggle"></span>
             </button>
 
-        {openEventIds.includes(event.id) && (
-          <div className="info-wrapper__content">
-            <p>{event.description}</p>
+            {openEventIds.includes(event.id) && (
+              <div className="info-wrapper__content">
+                <p>{event.description}</p>
 
-            <h3>Line Up</h3>
-            {event.lineup?.map((item, index) => (
-              <p key={index}>
-                {item.details} {item.time && `– ${item.time}`}
-              </p>
-            ))}
+                <h3>Line Up</h3>
+                {event.lineup?.map((item, index) => (
+                  <p key={index}>
+                    {item.details} {item.time && `– ${item.time}`}
+                  </p>
+                ))}
 
-            <h3>Tickets</h3>
-            {event.ticket_types.map((ticket) => (
-              <p key={ticket.id}>
-                {ticket.name} : £{(ticket.price.face_value / 100).toFixed(2)}
-                {ticket.sold_out && <strong> — SOLD OUT</strong>}
-              </p>
-            ))}
-          </div>
-        )}
+                <h3>Tickets</h3>
+                {event.ticket_types.map((ticket) => (
+                  <p key={ticket.id}>
+                    {ticket.name} : £{(ticket.price.face_value / 100).toFixed(2)}
+                    {ticket.sold_out && <strong> — SOLD OUT</strong>}
+                  </p>
+                ))}
+              </div>
+            )}
       </div>
 
 

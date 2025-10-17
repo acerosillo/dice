@@ -1,8 +1,6 @@
 .animate-fadeIn {
     padding: 1rem;
 }
-
-
 .info-wrapper {
   background-color: #eee;
 
@@ -24,13 +22,20 @@
 
   &__toggle {
     text-align: right;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    background: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13 11V6L11 6L11 11H6V13H11L11 18H13V13L18 13V11L13 11Z" fill="black"/></svg>') center center no-repeat;
   }
 
-    &.is-open {
-        background: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13 11V6L11 6L11 11H6V13H11L11 18H13V13L18 13V11L13 11Z" fill="black"/></svg>') 0 0 no-repeat;
-    }
+
 }
 
+.is-open {
+  .info-wrapper__toggle {
+    transform: rotate(45deg);
+  }
+}
 .card-summary {
     &__date {
         margin: 1rem 0 0 0;

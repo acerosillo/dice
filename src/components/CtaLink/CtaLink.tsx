@@ -1,7 +1,11 @@
 import './ctalink.scss';
+import type { CtaLinkProps } from './interface';
 
-export function CtaLink({ href, children }) {
-  return (
+export const CtaLink: React.FC<CtaLinkProps> = ({ 
+  href,
+  children,
+ }) => {
+    return (
     <a
       className="card-price__cta"
       href={href}

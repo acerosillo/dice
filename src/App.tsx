@@ -1,8 +1,7 @@
 import "./app.scss";
-
 import { Card } from './components/Card/Card';
-
 import { useEffect, useState, useRef } from "react";
+import { formatDate, formatSaleDate } from "./utils/dateUtils"; //helper files
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -11,9 +10,40 @@ function App() {
   const [error, setError] = useState(null);
   const [venueQuery, setVenueQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(12);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [openEventIds, setOpenEventIds] = useState([]);
+  const [openEventIds, setOpenEventIds] = useState<string[]>([]);
   const audioRef = useRef(new Audio());
+  const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
+
+  const handlePlayPreview = (event: any) => {
+    const previewUrl =
+      event.apple_music_tracks?.[0]?.preview_url ||
+      event.spotify_tracks?.[0]?.preview_url;
+    const fallbackUrl =
+      event.apple_music_tracks?.[0]?.url ||
+      event.spotify_tracks?.[0]?.url;
+
+    if (!previewUrl && fallbackUrl) {
+      window.open(fallbackUrl, "_blank");
+      return;
+    }
+
+    if (previewUrl) {
+      if (currentPlaying === previewUrl) {
+        // If the same song is playing, toggle pause
+        audioRef.current.pause();
+        setCurrentPlaying(null);
+        return;
+      }
+
+      // Stop previous and start new one
+      audioRef.current.pause();
+      audioRef.current.src = previewUrl;
+      audioRef.current.play();
+      setCurrentPlaying(previewUrl);
+
+      audioRef.current.onended = () => setCurrentPlaying(null);
+    }
+  }
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -33,11 +63,11 @@ function App() {
 
         const data = await response.json();
 
-        console.log(data);
+        //console.log(data);
 
         setEvents(data.data || data);
         setFilteredEvents(data.data || data);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
       } finally {
         setLoading(false);
@@ -46,71 +76,21 @@ function App() {
 
     fetchEvents();
 
-    return () => {
-      if (audioRef.current) audioRef.current.pause();
-    };
   }, []);
 
-  // 🔍 Handle venue name filtering
-  const handleVenueSearch = (e) => {
+  //Handle venue name filtering
+  const handleVenueSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setVenueQuery(query);
-    const filtered = events.filter((event) =>
+    const filtered = events.filter((event:any) =>
       event.venue?.toLowerCase().includes(query)
     );
     setFilteredEvents(filtered);
     setVisibleCount(12); // Reset when searching
   };
 
-  // 🎵 Toggle preview
-  const handlePlayPreview = (event) => {
-    const previewUrl =
-      event.apple_music_tracks?.[0]?.preview_url ||
-      event.spotify_tracks?.[0]?.preview_url;
-    const fallbackUrl =
-      event.apple_music_tracks?.[0]?.url ||
-      event.spotify_tracks?.[0]?.url;
 
-    if (previewUrl) {
-      if (isPlaying && audioRef.current.src === previewUrl) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        return;
-      }
-      audioRef.current.src = previewUrl;
-      audioRef.current.play();
-      setIsPlaying(true);
-      audioRef.current.onended = () => setIsPlaying(false);
-    } else if (fallbackUrl) {
-      window.open(fallbackUrl, "_blank");
-    }
-  };
-  // 📅 Helpers
-  const formatDate = (isoString) => {
-    if (!isoString) return "";
-    const date = new Date(isoString);
-    const day = date.toLocaleString("en-GB", { weekday: "short" });
-    const dayNum = date.getDate();
-    const month = date.toLocaleString("en-GB", { month: "short" });
-    const time = date.toLocaleString("en-GB", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-    return `${day} ${dayNum} ${month} - ${time.toLowerCase()}`;
-  };
-
-  const formatSaleDate = (isoString) => {
-    if (!isoString) return "";
-    const date = new Date(isoString);
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const toggleMoreInfo = (id) => {
+  const toggleMoreInfo = (id:string) => {
     setOpenEventIds((prev) =>
       prev.includes(id)
         ? prev.filter((eventId) => eventId !== id)
@@ -123,18 +103,18 @@ function App() {
   if (error)
     return <p>Error: {error}</p>;
 
-  // 🔢 Limit events shown
+  //Limit events shown
   const visibleEvents = filteredEvents.slice(0, visibleCount);
 
   return (
     <div className="wrapper">
-      <h1>
-        Upcoming Events
-      </h1>
 
-      {/* 🔍 Venue Search Input */}
       <div className="search-bar">
-        Search Venue : 
+
+        <h1>
+          Upcoming Events
+        </h1>
+        <strong>Search Venue by Name : </strong>
         <input
           type="text"
           value={venueQuery}
@@ -149,23 +129,27 @@ function App() {
         <>
           <div className="listing">
 
-            {visibleEvents.map((event, index) => (
+            {visibleEvents.map((event: any, index: number) => (
+              
               <Card
                 key={event.id}
                 event={event}
                 index={index}
-                isPlaying={isPlaying}
                 openEventIds={openEventIds}
-                handlePlayPreview={handlePlayPreview}
                 toggleMoreInfo={toggleMoreInfo}
                 formatDate={formatDate}
                 formatSaleDate={formatSaleDate}
+                
+                isPlaying={currentPlaying === event.apple_music_tracks?.[0]?.preview_url ||
+                     currentPlaying === event.spotify_tracks?.[0]?.preview_url}
+                handlePlayPreview={() => handlePlayPreview(event)}
+
               />
             ))}
 
           </div>
 
-          {/* 🔽 Load More */}
+          {/* Load More */}
           {visibleCount < filteredEvents.length && (
             <div>
               <button

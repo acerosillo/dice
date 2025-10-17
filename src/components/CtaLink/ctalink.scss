@@ -25,8 +25,11 @@
         font-weight: 600;
         display: flex;
         align-items: center; 
+        transition: color 0.3s ease, transform 0.3s ease;
         &:hover {
-            color: #ddd;
+            background-color: #6e73dc;
+            color: #FFF;
+            transform: translateY(-1px);
         }
     }
 
