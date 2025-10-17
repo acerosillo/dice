@@ -112,7 +112,7 @@ function App() {
   return (
     <div className="wrapper">
 
-      <p>React version : {REACT_VERSION}</p>
+      <small>React version : {REACT_VERSION}</small>
       <div className="search-bar">
 
         <h1>
